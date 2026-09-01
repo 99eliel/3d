@@ -4,11 +4,9 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="Pragma" content="no-cache">
-<meta http-equiv="Expires" content="0">
-<title>Visualizador 3D da Peça</title>
+<title>Peça 3D</title>
 <style>
-*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#211d1f;background:#f4efec}.app{min-height:100vh;display:grid;grid-template-columns:320px 1fr}.panel{background:#fff;padding:32px;border-right:1px solid #e7ddd8;display:flex;flex-direction:column;gap:26px;z-index:3}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a15d71;font-weight:700}.panel h1{font-size:28px;margin:8px 0;line-height:1.08}.sub{font-size:14px;line-height:1.55;color:#776c6f;margin:0}.section h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#807477;margin:0 0 14px}.colors{display:grid;grid-template-columns:repeat(4,44px);gap:12px}.swatch{width:42px;height:42px;border:3px solid #fff;border-radius:50%;cursor:pointer;box-shadow:0 0 0 1px #d8ccc7}.swatch.active{box-shadow:0 0 0 3px #823d54}.custom{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid #eee5e1}.custom input{width:52px;height:42px;padding:2px;border:1px solid #ddd0cb;border-radius:10px;background:#fff;cursor:pointer}.custom label{font-size:13px;font-weight:650;color:#4c4245}.current{margin-top:auto;padding:15px 16px;background:#f8f4f2;border-radius:14px;font-size:13px;color:#6e6265}.current strong{display:block;color:#30282a;margin-bottom:5px}.current-row{display:flex;align-items:center;gap:8px}.dot{width:14px;height:14px;border-radius:50%;background:#d96f91}.stage{position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(circle at 52% 42%,#fff 0,#f4efec 48%,#e4d9d4 100%)}#viewer{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.badge,.hint,.status{position:absolute;z-index:2;background:#ffffffdf;backdrop-filter:blur(9px);border:1px solid #eee3de;box-shadow:0 8px 24px #0000000c}.badge{top:22px;right:22px;border-radius:24px;padding:9px 13px;font-size:11px;font-weight:750;letter-spacing:.08em}.hint{bottom:22px;left:50%;transform:translateX(-50%);border-radius:28px;padding:10px 16px;font-size:12px;color:#71676a;white-space:nowrap}.status{top:22px;left:22px;border-radius:22px;padding:9px 13px;font-size:12px;font-weight:700;color:#675d60}.status.ok{color:#28704a}.status.err{color:#9a3341}.loading-ring{display:inline-block;width:10px;height:10px;margin-right:7px;border:2px solid #d9cbc6;border-top-color:#884159;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-1px}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:760px){.app{grid-template-columns:1fr}.stage{order:-1;min-height:62vh}.panel{padding:22px;border-right:0}.colors{grid-template-columns:repeat(6,40px)}.swatch{width:38px;height:38px}.badge{top:12px;right:12px}.status{top:12px;left:12px}.hint{bottom:12px}.current{margin-top:0}}
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,"Segoe UI",sans-serif;color:#211d1f;background:#f4efec}.app{min-height:100vh;display:grid;grid-template-columns:320px 1fr}.panel{background:#fff;padding:30px;border-right:1px solid #e7ddd8;display:flex;flex-direction:column;gap:28px}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a15d71;font-weight:700}h1{font-size:28px;margin:8px 0}.sub{font-size:14px;line-height:1.55;color:#766b6e;margin:0}.section h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#807477;margin:0 0 14px}.colors{display:grid;grid-template-columns:repeat(4,44px);gap:12px}.swatch{width:42px;height:42px;border:3px solid #fff;border-radius:50%;cursor:pointer;box-shadow:0 0 0 1px #d8ccc7;transition:.15s}.swatch:hover{transform:scale(1.06)}.swatch.active{box-shadow:0 0 0 3px #823d54}.custom{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid #eee5e1}.custom input{width:52px;height:42px;padding:2px;border:1px solid #ddd0cb;border-radius:10px;background:#fff}.custom label{font-size:13px;font-weight:650}.current{margin-top:auto;padding:15px 16px;background:#f8f4f2;border-radius:14px;font-size:13px}.current strong{display:block;margin-bottom:6px}.current-row{display:flex;align-items:center;gap:8px}.dot{width:14px;height:14px;border-radius:50%;background:#d96f91}.stage{position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(circle at 52% 42%,#fff 0,#f4efec 48%,#e4d9d4 100%)}#viewer{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.status,.badge,.hint{position:absolute;z-index:2;background:#ffffffdf;backdrop-filter:blur(8px);border:1px solid #eee3de;box-shadow:0 8px 24px #0000000c}.status{top:22px;left:22px;border-radius:22px;padding:9px 13px;font-size:12px;font-weight:700;color:#675d60}.status.ok{color:#28704a}.status.err{color:#9a3341}.badge{top:22px;right:22px;border-radius:22px;padding:9px 13px;font-size:11px;font-weight:750}.hint{bottom:22px;left:50%;transform:translateX(-50%);border-radius:26px;padding:10px 16px;font-size:12px;color:#71676a;white-space:nowrap}.ring{display:inline-block;width:10px;height:10px;margin-right:7px;border:2px solid #d9cbc6;border-top-color:#884159;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-1px}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:760px){.app{grid-template-columns:1fr}.stage{order:-1;min-height:62vh}.panel{padding:22px}.colors{grid-template-columns:repeat(6,40px)}.swatch{width:38px;height:38px}.status{top:12px;left:12px}.badge{top:12px;right:12px}.hint{bottom:12px}.current{margin-top:0}}
 </style>
 </head>
 <body>
@@ -18,81 +16,41 @@
 <section class="section"><h2>Cor da peça</h2><div class="colors" id="colors"></div><div class="custom"><input id="customColor" type="color" value="#d96f91"><label for="customColor">Escolher qualquer cor</label></div></section>
 <div class="current"><strong>Cor atual</strong><div class="current-row"><span class="dot" id="dot"></span><span id="colorName">Rosa</span></div></div>
 </aside>
-<section class="stage" id="stage"><canvas id="viewer"></canvas><div class="status" id="status"><span class="loading-ring"></span>Preparando...</div><div class="badge">SEU MODELO GLB</div><div class="hint">Arraste para girar • Scroll/pinça para zoom</div></section>
+<section class="stage" id="stage"><canvas id="viewer"></canvas><div class="status" id="status"><span class="ring"></span>Carregando modelo...</div><div class="badge">SEU MODELO GLB</div><div class="hint">Arraste para girar • Scroll/pinça para zoom</div></section>
 </main>
-<script>
-(async()=>{
-  try{
-    if('serviceWorker' in navigator){
-      const regs=await navigator.serviceWorker.getRegistrations();
-      const hadController=!!navigator.serviceWorker.controller;
-      await Promise.all(regs.map(r=>r.unregister()));
-      if('caches' in window){const keys=await caches.keys();await Promise.all(keys.map(k=>caches.delete(k)));}
-      const p=new URLSearchParams(location.search);
-      if((hadController||regs.length)&&!p.has('swreset')){p.set('swreset','1');p.set('t',Date.now());location.replace(location.pathname+'?'+p.toString());return;}
-    }
-  }catch(e){console.warn('Falha ao remover service worker antigo',e);}
-
-  const VERSION_KEY='3d-app-version';
-  async function checkVersion(){
-    try{
-      const r=await fetch('version.json?ts='+Date.now(),{cache:'no-store'});
-      if(!r.ok)return;
-      const data=await r.json();
-      if(!data.version)return;
-      const old=localStorage.getItem(VERSION_KEY);
-      if(!old){localStorage.setItem(VERSION_KEY,data.version);return;}
-      if(old!==data.version){localStorage.setItem(VERSION_KEY,data.version);location.replace(location.pathname+'?v='+encodeURIComponent(data.version)+'&t='+Date.now());}
-    }catch(e){console.warn('Verificação de atualização falhou',e);}
-  }
-  checkVersion();setInterval(checkVersion,60000);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkVersion();});
-})();
-</script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
 <script>
-(function(){
+(()=>{
 'use strict';
+const APP_VERSION='2026.09.01.3';
 const stage=document.getElementById('stage'),canvas=document.getElementById('viewer'),status=document.getElementById('status'),dot=document.getElementById('dot'),colorName=document.getElementById('colorName'),customColor=document.getElementById('customColor');
-const palette=[['Rosa','#d96f91'],['Preto','#181719'],['Vermelho','#a7283e'],['Vinho','#681d35'],['Azul marinho','#172b4b'],['Azul petróleo','#27616a'],['Lavanda','#917cab'],['Branco','#eee9e1'],['Bege','#d4b89b'],['Verde oliva','#667154'],['Chocolate','#58362d'],['Laranja','#cf7447']];
-let currentColor='#d96f91';
-function fail(msg){status.className='status err';status.textContent='Erro: '+msg;}
-if(!window.THREE||!THREE.GLTFLoader||!THREE.OrbitControls){fail('biblioteca 3D não carregou');return;}
-const scene=new THREE.Scene(),camera=new THREE.PerspectiveCamera(34,1,.01,100),renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'}),controls=new THREE.OrbitControls(camera,canvas);
-renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;renderer.shadowMap.enabled=true;renderer.setClearColor(0x000000,0);controls.enableDamping=true;controls.enablePan=false;controls.minDistance=.7;controls.maxDistance=4;
-scene.add(new THREE.HemisphereLight(0xffffff,0x8d7770,1.7));const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(2.4,3.2,3.5);scene.add(key);const fill=new THREE.DirectionalLight(0xffe5ec,1.15);fill.position.set(-2.2,1.5,2);scene.add(fill);const rim=new THREE.DirectionalLight(0xffffff,1.35);rim.position.set(0,2,-3);scene.add(rim);
-const garmentMaterial=new THREE.MeshPhysicalMaterial({color:new THREE.Color(currentColor),metalness:0,roughness:.48,clearcoat:.12,clearcoatRoughness:.52,side:THREE.DoubleSide});
+const palette=[['Rosa','#d96f91'],['Preto','#181719'],['Vermelho','#b72b42'],['Vinho','#681d35'],['Azul marinho','#172b4b'],['Azul petróleo','#27616a'],['Lavanda','#917cab'],['Branco','#eee9e1'],['Bege','#d4b89b'],['Verde oliva','#667154'],['Chocolate','#58362d'],['Laranja','#cf7447']];
+let material;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(34,1,.01,50);camera.position.set(0,.5,2);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));renderer.outputEncoding=THREE.sRGBEncoding;renderer.setClearColor(0,0);
+const controls=new THREE.OrbitControls(camera,canvas);controls.enableDamping=true;controls.dampingFactor=.07;controls.enablePan=false;controls.minDistance=.7;controls.maxDistance=4;
+scene.add(new THREE.HemisphereLight(0xffffff,0x806b68,1.8));const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(2.5,3,3);scene.add(key);const fill=new THREE.DirectionalLight(0xffe7ee,1.2);fill.position.set(-2,1.5,2);scene.add(fill);const rim=new THREE.DirectionalLight(0xffffff,1);rim.position.set(0,1,-3);scene.add(rim);
 function resize(){const r=stage.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height,false)}
-function setColor(hex,name){currentColor=hex;garmentMaterial.color.set(hex);garmentMaterial.needsUpdate=true;customColor.value=hex;dot.style.background=hex;colorName.textContent=name||'Personalizada';document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.color.toLowerCase()===hex.toLowerCase()));}
-const colors=document.getElementById('colors');palette.forEach(([name,hex],i)=>{const b=document.createElement('button');b.type='button';b.className='swatch'+(i===0?' active':'');b.dataset.color=hex;b.style.background=hex;b.title=name;b.addEventListener('click',()=>setColor(hex,name));colors.appendChild(b);});customColor.addEventListener('input',e=>setColor(e.target.value,'Personalizada'));
-function fitModel(root){const box=new THREE.Box3().setFromObject(root),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());root.position.sub(center);const maxDim=Math.max(size.x,size.y,size.z);root.scale.setScalar(1.35/maxDim);const fitted=new THREE.Box3().setFromObject(root),fsize=fitted.getSize(new THREE.Vector3()),fc=fitted.getCenter(new THREE.Vector3());controls.target.copy(fc);camera.position.set(fc.x,fc.y,fc.z+Math.max(1.55,fsize.y*1.45));camera.updateProjectionMatrix();controls.update();}
-function applyMaterial(root){root.traverse(o=>{if(o.isMesh){o.material=garmentMaterial;o.castShadow=true;o.receiveShadow=true;}})}
-async function loadModel(){
- try{
-  if(typeof DecompressionStream==='undefined')throw new Error('navegador sem suporte à descompactação');
-  status.innerHTML='<span class="loading-ring"></span>Baixando modelo...';
-  const names=['lingerie-model.part0','lingerie-model.part1','lingerie-model.part2a','lingerie-model.part2b','lingerie-model.part3','lingerie-model.part4','lingerie-model.part5','lingerie-model.part6'];
-  const stamp='20260901b';
-  const buffers=[];
-  for(let i=0;i<names.length;i++){
-    status.innerHTML='<span class="loading-ring"></span>Carregando '+(i+1)+'/'+names.length+'...';
-    const url=new URL('assets/'+names[i]+'?v='+stamp,location.href).href;
-    let res;
-    try{res=await fetch(url,{cache:'no-store',credentials:'same-origin'});}catch(e){throw new Error('falha ao baixar '+names[i]);}
-    if(!res.ok)throw new Error(names[i]+' retornou HTTP '+res.status);
-    buffers.push(new Uint8Array(await res.arrayBuffer()));
-  }
-  const total=buffers.reduce((n,b)=>n+b.byteLength,0);const joined=new Uint8Array(total);let offset=0;for(const b of buffers){joined.set(b,offset);offset+=b.byteLength;}
-  status.innerHTML='<span class="loading-ring"></span>Abrindo modelo...';
-  let arrayBuffer;
-  try{const stream=new Blob([joined]).stream().pipeThrough(new DecompressionStream('gzip'));arrayBuffer=await new Response(stream).arrayBuffer();}catch(e){throw new Error('arquivo 3D compactado inválido');}
-  new THREE.GLTFLoader().parse(arrayBuffer,'',gltf=>{const root=gltf.scene;applyMaterial(root);scene.add(root);fitModel(root);status.className='status ok';status.textContent='Modelo carregado';},err=>{console.error(err);fail('não foi possível abrir o GLB');});
- }catch(e){console.error(e);fail(e.message||'falha ao carregar o modelo');}
-}
+function setColor(hex,name){if(material){material.color.set(hex);material.needsUpdate=true}customColor.value=hex;dot.style.background=hex;colorName.textContent=name||'Personalizada';document.querySelectorAll('.swatch').forEach(x=>x.classList.toggle('active',x.dataset.color.toLowerCase()===hex.toLowerCase()))}
+const colors=document.getElementById('colors');palette.forEach(([name,hex],i)=>{const b=document.createElement('button');b.className='swatch'+(i===0?' active':'');b.dataset.color=hex;b.style.background=hex;b.title=name;b.onclick=()=>setColor(hex,name);colors.appendChild(b)});customColor.oninput=e=>setColor(e.target.value,'Personalizada');
+function fit(root){const box=new THREE.Box3().setFromObject(root),size=box.getSize(new THREE.Vector3()),center=box.getCenter(new THREE.Vector3());root.position.sub(center);const max=Math.max(size.x,size.y,size.z)||1;root.scale.setScalar(1.35/max);const b2=new THREE.Box3().setFromObject(root),s2=b2.getSize(new THREE.Vector3()),c2=b2.getCenter(new THREE.Vector3());controls.target.copy(c2);camera.position.set(c2.x,c2.y,c2.z+Math.max(1.5,s2.y*1.45));controls.update()}
+async function loadModel(){try{
+ if(!window.THREE||!THREE.GLTFLoader)throw new Error('Biblioteca 3D não carregou');
+ if(typeof DecompressionStream==='undefined')throw new Error('Navegador sem suporte à descompactação');
+ const urls=['assets/lingerie-model-fixed.glb.gz.b64','assets/modelb64_1.txt','assets/modelb64_2.txt','assets/modelb64_3.txt','assets/modelb64_4.txt'];
+ let b64='';for(let i=0;i<urls.length;i++){status.innerHTML='<span class="ring"></span>Carregando '+(i+1)+'/'+urls.length+'...';const r=await fetch(urls[i]+'?v='+APP_VERSION,{cache:'no-store'});if(!r.ok)throw new Error('falha no arquivo '+(i+1)+' ('+r.status+')');b64+=(await r.text()).replace(/\s/g,'')}
+ let raw;try{const bin=atob(b64);raw=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)raw[i]=bin.charCodeAt(i)}catch(e){throw new Error('Base64 do modelo inválido')}
+ if(raw[0]!==0x1f||raw[1]!==0x8b)throw new Error('arquivo compactado inválido');
+ const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));const glb=await new Response(stream).arrayBuffer();const head=new Uint8Array(glb,0,4);if(head[0]!==0x67||head[1]!==0x6c||head[2]!==0x54||head[3]!==0x46)throw new Error('GLB inválido após descompactar');
+ const loader=new THREE.GLTFLoader();loader.parse(glb,'',gltf=>{const root=gltf.scene;material=new THREE.MeshPhysicalMaterial({color:0xd96f91,roughness:.48,metalness:0,clearcoat:.1,side:THREE.DoubleSide});root.traverse(o=>{if(o.isMesh){if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();o.material=material}});scene.add(root);fit(root);status.className='status ok';status.textContent='Modelo carregado';},e=>{console.error(e);status.className='status err';status.textContent='Erro ao abrir o GLB'});
+ }catch(e){console.error(e);status.className='status err';status.textContent='Erro: '+e.message}}
+async function cleanupOldSW(){try{if('serviceWorker'in navigator){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister()}if('caches'in window){for(const k of await caches.keys())await caches.delete(k)}}catch(e){}}
+async function checkUpdate(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.json()).version;if(v&&v!==APP_VERSION){const u=new URL(location.href);u.searchParams.set('v',v);location.replace(u.href)}}catch(e){}}
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
-window.addEventListener('resize',resize);resize();animate();loadModel();
+window.addEventListener('resize',resize);document.addEventListener('visibilitychange',()=>{if(!document.hidden)checkUpdate()});setInterval(checkUpdate,60000);resize();animate();cleanupOldSW().finally(loadModel);setTimeout(checkUpdate,3000);
 })();
 </script>
-</body>
-</html>
+</body></html>
