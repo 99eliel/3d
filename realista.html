@@ -1,0 +1,103 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
+<title>Configurador 3D Realista</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,Segoe UI,Arial,sans-serif;background:#f4efec;color:#211d1e}.app{min-height:100vh;display:grid;grid-template-columns:370px 1fr}.panel{background:#fff;padding:26px 28px;border-right:1px solid #e7dcd7;overflow:auto;z-index:3}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a06073}.panel h1{font-size:29px;line-height:1.05;margin:9px 0}.sub{font-size:13px;color:#746a6c;line-height:1.5;margin-bottom:19px}.section{margin:20px 0}.section h3{font-size:11px;letter-spacing:.13em;text-transform:uppercase;color:#817579;margin:0 0 9px}.grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}.row{display:flex;gap:8px}.btn{appearance:none;border:1px solid #dfd3ce;background:#fff;color:#30292b;border-radius:12px;min-height:43px;padding:9px 10px;font-weight:650;cursor:pointer;transition:.16s}.btn:hover{border-color:#b77b8c}.btn.active{border-color:#884158;background:#f8edf0;color:#7a3048}.row .btn{flex:1}.colors{display:flex;gap:10px;flex-wrap:wrap}.sw{width:35px;height:35px;border-radius:50%;border:3px solid #fff;box-shadow:0 0 0 1px #d7cbc6;cursor:pointer}.sw.active{box-shadow:0 0 0 2px #884158}.summary{margin-top:23px;background:#f7f3f1;border-radius:15px;padding:15px;font-size:12px;line-height:1.75}.summary b{display:block;font-size:13px}.note{font-size:10px;color:#92878a;margin-top:7px;line-height:1.4}.stage{position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(circle at 52% 35%,#fff 0,#f5efeb 40%,#e3d9d4 100%)}#viewer{position:absolute;inset:0;width:100%;height:100%;display:block}.badge,.status,.hint{position:absolute;background:#ffffffdf;backdrop-filter:blur(9px);border:1px solid #ece2dd;box-shadow:0 8px 25px #0000000d}.badge{top:20px;right:20px;border-radius:22px;padding:9px 13px;font-size:11px}.status{top:20px;left:20px;border-radius:22px;padding:9px 13px;font-size:11px;font-weight:700}.status.ok{color:#176642}.status.warn{color:#8b5a17}.hint{left:50%;bottom:20px;transform:translateX(-50%);border-radius:26px;padding:10px 15px;font-size:11px;color:#6f6466;white-space:nowrap}.loading{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}.loadcard{background:#ffffffeb;border:1px solid #e9dfda;border-radius:18px;padding:18px 22px;text-align:center;box-shadow:0 14px 35px #00000010}.loadcard strong{display:block;margin-bottom:5px}.loadcard span{font-size:12px;color:#7a7072}.hidden{display:none}.version{font-size:10px;color:#9a8e90;margin-top:7px}@media(max-width:820px){.app{grid-template-columns:1fr}.stage{order:-1;min-height:60vh}.panel{border-right:0;padding:20px}.badge{top:12px;right:12px}.status{top:12px;left:12px}.hint{bottom:12px}.panel h1{font-size:25px}}
+</style>
+<script type="importmap">{"imports":{"three":"https://cdn.jsdelivr.net/npm/three@0.169.0/build/three.module.js","three/addons/":"https://cdn.jsdelivr.net/npm/three@0.169.0/examples/jsm/"}}</script>
+</head>
+<body>
+<main class="app">
+<aside class="panel">
+<div class="brand">Protótipo • Moda íntima</div>
+<h1>Configurador 3D</h1>
+<div class="sub">Versão WebGL com manequim 3D real, tecido PBR e peças geradas ao redor do corpo.</div>
+<div class="section"><h3>Corpo</h3><div class="row"><button class="btn active" data-body="1">Corpo 1</button><button class="btn" data-body="2">Corpo 2</button><button class="btn" data-body="3">Corpo 3</button></div><div class="note">Nesta prova, os corpos alteram proporção geral. Morphs por cintura/quadril entram quando tivermos manequins próprios.</div></div>
+<div class="section"><h3>Modelo</h3><div class="grid"><button class="btn active" data-model="tanga">Tanga</button><button class="btn" data-model="fio">Fio dental</button><button class="btn" data-model="alta">Cintura alta</button><button class="btn" data-model="calecon">Caleçon</button></div></div>
+<div class="section"><h3>Cor do tecido</h3><div class="colors" id="colors"></div></div>
+<div class="section"><h3>Acabamento</h3><div class="row"><button class="btn active" data-finish="liso">Liso</button><button class="btn" data-finish="acetinado">Acetinado</button><button class="btn" data-finish="renda">Renda</button></div></div>
+<div class="section"><h3>Detalhes</h3><div class="row"><button class="btn active" id="bow">Laço</button><button class="btn active" id="trim">Viés</button></div></div>
+<div class="summary"><b>Configuração atual</b>Corpo: <span id="sBody">Corpo 1</span><br>Modelo: <span id="sModel">Tanga</span><br>Cor: <span id="sColor">Rosa queimado</span><br>Acabamento: <span id="sFinish">Liso</span><div class="version">Versão 3.0 • GLB + Three.js + PBR</div></div>
+</aside>
+<section class="stage" id="stage">
+<canvas id="viewer"></canvas>
+<div class="status warn" id="status">CARREGANDO MANEQUIM</div>
+<div class="badge">DEMO REALISTA</div>
+<div class="hint">Arraste para girar • Scroll/pinça para zoom</div>
+<div class="loading" id="loading"><div class="loadcard"><strong>Preparando o manequim 3D</strong><span>Primeiro carregamento pode levar alguns segundos.</span></div></div>
+</section>
+</main>
+<script type="module">
+import * as THREE from 'three';
+import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+import { GLTFLoader } from 'three/addons/loaders/GLTFLoader.js';
+
+const stage=document.getElementById('stage');
+const canvas=document.getElementById('viewer');
+const statusEl=document.getElementById('status');
+const loadingEl=document.getElementById('loading');
+const scene=new THREE.Scene();
+scene.background=null;
+const camera=new THREE.PerspectiveCamera(34,1,.01,1000);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(devicePixelRatio||1,2));
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.outputColorSpace=THREE.SRGBColorSpace;
+renderer.toneMapping=THREE.ACESFilmicToneMapping;
+renderer.toneMappingExposure=1.08;
+const controls=new OrbitControls(camera,canvas);
+controls.enableDamping=true;controls.dampingFactor=.065;controls.enablePan=false;controls.minPolarAngle=Math.PI*.25;controls.maxPolarAngle=Math.PI*.75;
+
+scene.add(new THREE.HemisphereLight(0xfffaf7,0x7c6870,2.25));
+const key=new THREE.DirectionalLight(0xfff4ed,4.2);key.position.set(4,6,5);key.castShadow=true;scene.add(key);
+const fill=new THREE.DirectionalLight(0xe8d7ff,2.1);fill.position.set(-4,3,2);scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffc9d9,2.7);rim.position.set(2,4,-5);scene.add(rim);
+
+const root=new THREE.Group();scene.add(root);
+let mannequin=null,garmentGroup=new THREE.Group();root.add(garmentGroup);
+let bodyType=1,model='tanga',finish='liso',fabricColor='#b86d82',showBow=true,showTrim=true;
+let bodyBox=new THREE.Box3(new THREE.Vector3(-1,0,-.5),new THREE.Vector3(1,5.54,.5));
+let H=5.54,center=new THREE.Vector3(0,2.77,0);
+const bodies={1:{sx:1,sz:1,label:'Corpo 1'},2:{sx:.92,sz:1.08,label:'Corpo 2'},3:{sx:1.10,sz:1.15,label:'Corpo 3'}};
+const palette=[['Rosa queimado','#b86d82'],['Preto','#191719'],['Vermelho','#a02639'],['Azul petróleo','#285e68'],['Off-white','#e8dfd2'],['Lavanda','#8d78aa']];
+
+function setStatus(text,ok=true){statusEl.textContent=text;statusEl.className='status '+(ok?'ok':'warn')}
+function clearGroup(g){while(g.children.length){const o=g.children.pop();o.traverse?.(n=>{n.geometry?.dispose?.();if(n.material){if(Array.isArray(n.material))n.material.forEach(m=>m.dispose?.());else n.material.dispose?.()}})}}
+function laceAlphaTexture(){const c=document.createElement('canvas');c.width=c.height=256;const x=c.getContext('2d');x.fillStyle='#111';x.fillRect(0,0,256,256);x.strokeStyle='#fff';x.lineWidth=8;for(let y=12;y<256;y+=28){for(let xx=12;xx<256;xx+=28){x.beginPath();x.arc(xx,y,9,0,Math.PI*2);x.stroke();x.beginPath();x.moveTo(xx-14,y);x.lineTo(xx+14,y);x.moveTo(xx,y-14);x.lineTo(xx,y+14);x.stroke()}}x.globalAlpha=.65;x.lineWidth=3;for(let i=-256;i<512;i+=18){x.beginPath();x.moveTo(i,0);x.lineTo(i+256,256);x.stroke();x.beginPath();x.moveTo(i,256);x.lineTo(i+256,0);x.stroke()}const t=new THREE.CanvasTexture(c);t.wrapS=t.wrapT=THREE.RepeatWrapping;t.repeat.set(2.5,2.5);return t}
+const laceTex=laceAlphaTexture();
+function fabricMaterial(){const params={color:new THREE.Color(fabricColor),side:THREE.DoubleSide,metalness:0,roughness:.54,sheen:0.55,sheenRoughness:.58,sheenColor:new THREE.Color(0xffffff),clearcoat:0.02,clearcoatRoughness:.5};if(finish==='acetinado'){params.roughness=.2;params.sheen=1;params.sheenRoughness=.22;params.clearcoat=.12}if(finish==='renda'){params.roughness=.68;params.transparent=true;params.alphaMap=laceTex;params.alphaTest=.14;params.opacity=.96}return new THREE.MeshPhysicalMaterial(params)}
+function darkerMaterial(){const c=new THREE.Color(fabricColor).multiplyScalar(.62);return new THREE.MeshPhysicalMaterial({color:c,roughness:.48,sheen:.55,sheenColor:new THREE.Color(0xffffff)})}
+
+function garmentProfile(theta){const front=Math.cos(theta)>=0;const fb=Math.abs(Math.cos(theta));let top=.545,frontDrop=.095,backDrop=.09,sideDrop=.018;if(model==='fio'){top=.548;frontDrop=.10;backDrop=.052;sideDrop=.014}if(model==='alta'){top=.615;frontDrop=.16;backDrop=.15;sideDrop=.075}if(model==='calecon'){top=.56;frontDrop=.095;backDrop=.09;sideDrop=.068}const drop=sideDrop+fb*((front?frontDrop:backDrop)-sideDrop);return {topY:bodyBox.min.y+H*top,bottomY:bodyBox.min.y+H*(top-drop)}}
+function createGarmentGeometry(){const seg=112,rows=12,verts=[],uv=[],idx=[];const rx=H*.108,rz=H*.071;for(let i=0;i<=seg;i++){const th=i/seg*Math.PI*2;const prof=garmentProfile(th);for(let j=0;j<=rows;j++){const u=j/rows;const y=THREE.MathUtils.lerp(prof.bottomY,prof.topY,u);const low=.78+.22*u;const x=rx*Math.sin(th)*low;const z=rz*Math.cos(th)*(.82+.18*u);verts.push(x,y,z);uv.push(i/seg,u)}}for(let i=0;i<seg;i++){for(let j=0;j<rows;j++){const a=i*(rows+1)+j,b=(i+1)*(rows+1)+j,c=b+1,d=a+1;idx.push(a,b,d,b,c,d)}}const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.Float32BufferAttribute(verts,3));g.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));g.setIndex(idx);g.computeVertexNormals();return g}
+function curveAround(edge='top'){const pts=[];const seg=80,rx=H*.109,rz=H*.072;for(let i=0;i<seg;i++){const th=i/seg*Math.PI*2;const p=garmentProfile(th);const y=edge==='top'?p.topY:p.bottomY;const u=edge==='top'?1:.03;const low=.78+.22*u;pts.push(new THREE.Vector3(rx*Math.sin(th)*low,y,rz*Math.cos(th)*(.82+.18*u)))}return new THREE.CatmullRomCurve3(pts,true,'centripetal')}
+function addBow(){if(!showBow)return;const prof=garmentProfile(0),y=prof.topY-H*.006,z=H*.073;const m=darkerMaterial();const l=new THREE.Mesh(new THREE.SphereGeometry(H*.012,24,16),m);l.scale.set(1.7,.58,.28);l.position.set(-H*.011,y,z);l.rotation.z=.48;l.castShadow=true;garmentGroup.add(l);const r=l.clone();r.position.x=H*.011;r.rotation.z=-.48;garmentGroup.add(r);const knot=new THREE.Mesh(new THREE.SphereGeometry(H*.0065,20,14),m);knot.position.set(0,y,z+H*.003);knot.castShadow=true;garmentGroup.add(knot)}
+function rebuildGarment(){clearGroup(garmentGroup);garmentGroup=new THREE.Group();root.add(garmentGroup);const cloth=new THREE.Mesh(createGarmentGeometry(),fabricMaterial());cloth.castShadow=true;cloth.receiveShadow=true;garmentGroup.add(cloth);if(showTrim){const tm=darkerMaterial();const top=new THREE.Mesh(new THREE.TubeGeometry(curveAround('top'),96,H*.0022,8,true),tm);const leg=new THREE.Mesh(new THREE.TubeGeometry(curveAround('bottom'),96,H*.0018,8,true),tm);top.castShadow=leg.castShadow=true;garmentGroup.add(top,leg)}addBow()}
+function applyBody(){const b=bodies[bodyType];root.scale.set(b.sx,1,b.sz);rebuildGarment()}
+
+function setupLoadedModel(obj){mannequin=obj;const mannequinMat=new THREE.MeshPhysicalMaterial({color:0xe0bea9,roughness:.72,metalness:0,sheen:.2,sheenRoughness:.8});mannequin.traverse(n=>{if(n.isMesh){n.geometry?.computeVertexNormals?.();n.material=mannequinMat;n.castShadow=true;n.receiveShadow=true}});root.add(mannequin);bodyBox.setFromObject(mannequin);const size=bodyBox.getSize(new THREE.Vector3());center=bodyBox.getCenter(new THREE.Vector3());H=size.y||5.54;frameCamera();applyBody();loadingEl.classList.add('hidden');setStatus('MANEQUIM 3D CARREGADO',true)}
+function buildFallback(){const g=new THREE.Group();const m=new THREE.MeshPhysicalMaterial({color:0xe0bea9,roughness:.72});const e=(y,sx,sy,sz)=>{const o=new THREE.Mesh(new THREE.SphereGeometry(1,48,36),m);o.position.y=y;o.scale.set(sx,sy,sz);o.castShadow=true;g.add(o)};e(3.45,.68,1.0,.48);e(2.65,.78,.72,.58);e(1.85,.34,.95,.33);const l=g.children[g.children.length-1];l.position.x=-.32;const rr=l.clone();rr.position.x=.32;g.add(rr);bodyBox=new THREE.Box3(new THREE.Vector3(-.85,.65,-.62),new THREE.Vector3(.85,4.45,.62));H=3.8;center=bodyBox.getCenter(new THREE.Vector3());setupLoadedModel(g);setStatus('MODO MANEQUIM LOCAL',false)}
+function frameCamera(){const targetY=bodyBox.min.y+H*.52;controls.target.set(center.x,targetY,center.z);camera.position.set(center.x,targetY+H*.01,center.z+H*.72);camera.near=H*.004;camera.far=H*20;camera.updateProjectionMatrix();controls.minDistance=H*.42;controls.maxDistance=H*1.25;controls.update()}
+
+const loader=new GLTFLoader();
+loader.load('https://cdn.jsdelivr.net/gh/UMRAM-Bilkent/supine-human-model@main/assets/human_posed.glb',g=>setupLoadedModel(g.scene),undefined,err=>{console.error(err);buildFallback()});
+
+function resize(){const r=stage.getBoundingClientRect();renderer.setSize(r.width,r.height,false);camera.aspect=r.width/r.height;camera.updateProjectionMatrix()}
+new ResizeObserver(resize).observe(stage);resize();
+renderer.setAnimationLoop(()=>{controls.update();renderer.render(scene,camera)});
+
+function setActive(sel,el){document.querySelectorAll(sel).forEach(x=>x.classList.remove('active'));el.classList.add('active')}
+palette.forEach(([name,hex],i)=>{const b=document.createElement('button');b.className='sw'+(i===0?' active':'');b.style.background=hex;b.title=name;b.setAttribute('aria-label',name);b.addEventListener('click',()=>{setActive('.sw',b);fabricColor=hex;document.getElementById('sColor').textContent=name;rebuildGarment()});document.getElementById('colors').appendChild(b)});
+document.querySelectorAll('[data-body]').forEach(b=>b.addEventListener('click',()=>{setActive('[data-body]',b);bodyType=Number(b.dataset.body);document.getElementById('sBody').textContent=bodies[bodyType].label;applyBody()}));
+document.querySelectorAll('[data-model]').forEach(b=>b.addEventListener('click',()=>{setActive('[data-model]',b);model=b.dataset.model;document.getElementById('sModel').textContent=b.textContent;rebuildGarment()}));
+document.querySelectorAll('[data-finish]').forEach(b=>b.addEventListener('click',()=>{setActive('[data-finish]',b);finish=b.dataset.finish;document.getElementById('sFinish').textContent=b.textContent;rebuildGarment()}));
+document.getElementById('bow').addEventListener('click',e=>{showBow=!showBow;e.currentTarget.classList.toggle('active',showBow);rebuildGarment()});
+document.getElementById('trim').addEventListener('click',e=>{showTrim=!showTrim;e.currentTarget.classList.toggle('active',showTrim);rebuildGarment()});
+</script>
+</body>
+</html>
