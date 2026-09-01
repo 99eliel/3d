@@ -4,9 +4,104 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate">
-<meta http-equiv="refresh" content="0; url=realista.html?v=3">
-<title>Configurador 3D</title>
-<style>body{font-family:system-ui,Arial;margin:0;min-height:100vh;display:grid;place-items:center;background:#f4efec;color:#32282b}.box{text-align:center;background:#fff;padding:28px;border-radius:18px;border:1px solid #e8ddd8}.box a{color:#7f3650;font-weight:700}</style>
+<title>Visualizador 3D da Peça</title>
+<style>
+*{box-sizing:border-box}html,body{margin:0;min-height:100%;font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#211d1f;background:#f4efec}.app{min-height:100vh;display:grid;grid-template-columns:320px 1fr}.panel{background:#fff;padding:32px;border-right:1px solid #e7ddd8;display:flex;flex-direction:column;gap:26px;z-index:3}.brand{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:#a15d71;font-weight:700}.panel h1{font-size:28px;margin:8px 0 8px;line-height:1.08}.sub{font-size:14px;line-height:1.55;color:#776c6f;margin:0}.section h2{font-size:12px;text-transform:uppercase;letter-spacing:.12em;color:#807477;margin:0 0 14px}.colors{display:grid;grid-template-columns:repeat(4,44px);gap:12px}.swatch{width:42px;height:42px;border:3px solid #fff;border-radius:50%;cursor:pointer;box-shadow:0 0 0 1px #d8ccc7;transition:.16s transform,.16s box-shadow}.swatch:hover{transform:scale(1.07)}.swatch.active{box-shadow:0 0 0 3px #823d54}.custom{display:flex;align-items:center;gap:12px;margin-top:18px;padding-top:18px;border-top:1px solid #eee5e1}.custom input{width:52px;height:42px;padding:2px;border:1px solid #ddd0cb;border-radius:10px;background:#fff;cursor:pointer}.custom label{font-size:13px;font-weight:650;color:#4c4245}.current{margin-top:auto;padding:15px 16px;background:#f8f4f2;border-radius:14px;font-size:13px;color:#6e6265}.current strong{display:block;color:#30282a;margin-bottom:5px}.current-row{display:flex;align-items:center;gap:8px}.dot{width:14px;height:14px;border-radius:50%;background:#d96f91;box-shadow:0 0 0 1px #0001}.stage{position:relative;min-height:100vh;overflow:hidden;background:radial-gradient(circle at 52% 42%,#fff 0,#f4efec 48%,#e4d9d4 100%)}#viewer{position:absolute;inset:0;width:100%;height:100%;display:block;touch-action:none}.badge,.hint,.status{position:absolute;z-index:2;background:#ffffffdf;backdrop-filter:blur(9px);border:1px solid #eee3de;box-shadow:0 8px 24px #0000000c}.badge{top:22px;right:22px;border-radius:24px;padding:9px 13px;font-size:11px;font-weight:750;letter-spacing:.08em}.hint{bottom:22px;left:50%;transform:translateX(-50%);border-radius:28px;padding:10px 16px;font-size:12px;color:#71676a;white-space:nowrap}.status{top:22px;left:22px;border-radius:22px;padding:9px 13px;font-size:12px;font-weight:700;color:#675d60}.status.ok{color:#28704a}.status.err{color:#9a3341}.loading-ring{display:inline-block;width:10px;height:10px;margin-right:7px;border:2px solid #d9cbc6;border-top-color:#884159;border-radius:50%;animation:spin .8s linear infinite;vertical-align:-1px}@keyframes spin{to{transform:rotate(360deg)}}@media(max-width:760px){.app{grid-template-columns:1fr}.stage{order:-1;min-height:62vh}.panel{padding:22px;border-right:0}.colors{grid-template-columns:repeat(6,40px)}.swatch{width:38px;height:38px}.badge{top:12px;right:12px}.status{top:12px;left:12px}.hint{bottom:12px}.current{margin-top:0}}
+</style>
 </head>
-<body><div class="box"><strong>Abrindo o Configurador 3D realista…</strong><p>Se não abrir automaticamente, <a href="realista.html?v=3">clique aqui</a>.</p><p><small>Demo anterior: <a href="demo-v2.html">versão 2</a></small></p></div></body>
+<body>
+<main class="app">
+<aside class="panel">
+<div>
+<div class="brand">Teste com modelo real</div>
+<h1>Peça 3D</h1>
+<p class="sub">O modelo que você enviou está sendo usado diretamente no visualizador. Selecione uma cor e ela é aplicada à peça em tempo real.</p>
+</div>
+<section class="section">
+<h2>Cor da peça</h2>
+<div class="colors" id="colors"></div>
+<div class="custom"><input id="customColor" type="color" value="#d96f91" aria-label="Escolher qualquer cor"><label for="customColor">Escolher qualquer cor</label></div>
+</section>
+<div class="current"><strong>Cor atual</strong><div class="current-row"><span class="dot" id="dot"></span><span id="colorName">Rosa</span></div></div>
+</aside>
+<section class="stage" id="stage">
+<canvas id="viewer"></canvas>
+<div class="status" id="status"><span class="loading-ring"></span>Carregando modelo...</div>
+<div class="badge">MODELO GLB</div>
+<div class="hint">Arraste para girar • Scroll/pinça para zoom</div>
+</section>
+</main>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+<script>
+(function(){
+'use strict';
+const stage=document.getElementById('stage');
+const canvas=document.getElementById('viewer');
+const status=document.getElementById('status');
+const dot=document.getElementById('dot');
+const colorName=document.getElementById('colorName');
+const customColor=document.getElementById('customColor');
+const palette=[
+ ['Rosa','#d96f91'],['Preto','#181719'],['Vermelho','#a7283e'],['Vinho','#681d35'],
+ ['Azul marinho','#172b4b'],['Azul petróleo','#27616a'],['Lavanda','#917cab'],['Branco','#eee9e1'],
+ ['Bege','#d4b89b'],['Verde oliva','#667154'],['Chocolate','#58362d'],['Laranja','#cf7447']
+];
+let currentColor='#d96f91';
+let modelRoot=null;
+const scene=new THREE.Scene();
+const camera=new THREE.PerspectiveCamera(34,1,.01,100);
+camera.position.set(0,.52,2.15);
+const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
+renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
+renderer.outputEncoding=THREE.sRGBEncoding;
+renderer.shadowMap.enabled=true;
+renderer.shadowMap.type=THREE.PCFSoftShadowMap;
+renderer.setClearColor(0x000000,0);
+const controls=new THREE.OrbitControls(camera,canvas);
+controls.enableDamping=true;
+controls.dampingFactor=.07;
+controls.enablePan=false;
+controls.minDistance=.85;
+controls.maxDistance=4;
+controls.target.set(0,.5,0);
+controls.autoRotate=false;
+scene.add(new THREE.HemisphereLight(0xffffff,0x8d7770,1.65));
+const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(2.4,3.2,3.5);scene.add(key);
+const fill=new THREE.DirectionalLight(0xffe5ec,1.25);fill.position.set(-2.2,1.5,2);scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffffff,1.45);rim.position.set(0,2,-3);scene.add(rim);
+const garmentMaterial=new THREE.MeshPhysicalMaterial({color:new THREE.Color(currentColor),metalness:0,roughness:.48,clearcoat:.12,clearcoatRoughness:.52,side:THREE.DoubleSide});
+function resize(){const r=stage.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height,false)}
+function setColor(hex,name){currentColor=hex;garmentMaterial.color.set(hex);garmentMaterial.needsUpdate=true;customColor.value=hex;dot.style.background=hex;colorName.textContent=name||hex.toUpperCase();document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.color.toLowerCase()===hex.toLowerCase()))}
+const colors=document.getElementById('colors');
+palette.forEach(([name,hex],i)=>{const b=document.createElement('button');b.type='button';b.className='swatch'+(i===0?' active':'');b.dataset.color=hex;b.style.background=hex;b.title=name;b.setAttribute('aria-label',name);b.addEventListener('click',()=>setColor(hex,name));colors.appendChild(b)});
+customColor.addEventListener('input',e=>setColor(e.target.value,'Personalizada'));
+function fitModel(root){const box=new THREE.Box3().setFromObject(root);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());root.position.sub(center);root.position.y+=size.y/2;const maxDim=Math.max(size.x,size.y,size.z);const scale=1.18/maxDim;root.scale.setScalar(scale);const newBox=new THREE.Box3().setFromObject(root);const newSize=newBox.getSize(new THREE.Vector3());const newCenter=newBox.getCenter(new THREE.Vector3());controls.target.set(newCenter.x,newCenter.y,newCenter.z);camera.position.set(newCenter.x,newCenter.y,newCenter.z+Math.max(1.65,newSize.y*1.65));camera.near=.01;camera.far=50;camera.updateProjectionMatrix();controls.update()}
+function applyMaterial(root){root.traverse(obj=>{if(obj.isMesh){obj.material=garmentMaterial;obj.castShadow=true;obj.receiveShadow=true}})}
+async function loadModel(){
+ try{
+  if(!window.THREE||!THREE.GLTFLoader)throw new Error('Biblioteca 3D não carregou.');
+  if(typeof DecompressionStream==='undefined')throw new Error('Seu navegador não suporta a descompactação usada nesta demo.');
+  const res=await fetch('assets/lingerie-model.glb.gz?v=1',{cache:'no-store'});
+  if(!res.ok)throw new Error('Não foi possível baixar o modelo ('+res.status+').');
+  const compressed=await res.arrayBuffer();
+  const stream=new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const arrayBuffer=await new Response(stream).arrayBuffer();
+  const loader=new THREE.GLTFLoader();
+  loader.parse(arrayBuffer,'',gltf=>{
+    modelRoot=gltf.scene;
+    applyMaterial(modelRoot);
+    scene.add(modelRoot);
+    fitModel(modelRoot);
+    status.className='status ok';
+    status.textContent='Modelo carregado';
+  },err=>{throw err});
+ }catch(err){console.error(err);status.className='status err';status.textContent='Erro: '+(err.message||'falha ao carregar o modelo');}
+}
+function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
+window.addEventListener('resize',resize);resize();animate();loadModel();
+})();
+</script>
+</body>
 </html>
