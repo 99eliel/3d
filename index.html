@@ -93,7 +93,16 @@ async function loadModel(){
  try{
   if(!window.THREE||!THREE.GLTFLoader)throw new Error('Biblioteca 3D não carregou.');
   if(typeof DecompressionStream==='undefined')throw new Error('Seu navegador não suporta a descompactação usada nesta demo.');
-  const partUrls=Array.from({length:7},(_,i)=>`assets/lingerie-model.part${i}?v=4`);
+  const partUrls=[
+   'assets/lingerie-model.part0?v=5',
+   'assets/lingerie-model.part1?v=5',
+   'assets/lingerie-model.part2a?v=5',
+   'assets/lingerie-model.part2b?v=5',
+   'assets/lingerie-model.part3?v=5',
+   'assets/lingerie-model.part4?v=5',
+   'assets/lingerie-model.part5?v=5',
+   'assets/lingerie-model.part6?v=5'
+  ];
   const buffers=await Promise.all(partUrls.map(async url=>{
    const res=await fetch(url,{cache:'no-store'});
    if(!res.ok)throw new Error('Não foi possível baixar uma parte do modelo ('+res.status+').');
