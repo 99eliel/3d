@@ -13,9 +13,9 @@
 <main class="app">
 <aside class="panel">
 <div>
-<div class="brand">Teste com modelo real</div>
+<div class="brand">Teste com seu modelo</div>
 <h1>Peça 3D</h1>
-<p class="sub">O modelo que você enviou está sendo usado diretamente no visualizador. Selecione uma cor e ela é aplicada à peça em tempo real.</p>
+<p class="sub">Uma cópia otimizada do modelo que você enviou está no visualizador. A única configuração da peça nesta versão é a cor.</p>
 </div>
 <section class="section">
 <h2>Cor da peça</h2>
@@ -27,7 +27,7 @@
 <section class="stage" id="stage">
 <canvas id="viewer"></canvas>
 <div class="status" id="status"><span class="loading-ring"></span>Carregando modelo...</div>
-<div class="badge">MODELO GLB</div>
+<div class="badge">SEU MODELO GLB</div>
 <div class="hint">Arraste para girar • Scroll/pinça para zoom</div>
 </section>
 </main>
@@ -49,10 +49,8 @@ const palette=[
  ['Bege','#d4b89b'],['Verde oliva','#667154'],['Chocolate','#58362d'],['Laranja','#cf7447']
 ];
 let currentColor='#d96f91';
-let modelRoot=null;
 const scene=new THREE.Scene();
 const camera=new THREE.PerspectiveCamera(34,1,.01,100);
-camera.position.set(0,.52,2.15);
 const renderer=new THREE.WebGLRenderer({canvas,antialias:true,alpha:true,powerPreference:'high-performance'});
 renderer.setPixelRatio(Math.min(window.devicePixelRatio||1,2));
 renderer.outputEncoding=THREE.sRGBEncoding;
@@ -63,40 +61,63 @@ const controls=new THREE.OrbitControls(camera,canvas);
 controls.enableDamping=true;
 controls.dampingFactor=.07;
 controls.enablePan=false;
-controls.minDistance=.85;
+controls.minDistance=.7;
 controls.maxDistance=4;
-controls.target.set(0,.5,0);
 controls.autoRotate=false;
-scene.add(new THREE.HemisphereLight(0xffffff,0x8d7770,1.65));
+scene.add(new THREE.HemisphereLight(0xffffff,0x8d7770,1.7));
 const key=new THREE.DirectionalLight(0xffffff,2.5);key.position.set(2.4,3.2,3.5);scene.add(key);
-const fill=new THREE.DirectionalLight(0xffe5ec,1.25);fill.position.set(-2.2,1.5,2);scene.add(fill);
-const rim=new THREE.DirectionalLight(0xffffff,1.45);rim.position.set(0,2,-3);scene.add(rim);
+const fill=new THREE.DirectionalLight(0xffe5ec,1.15);fill.position.set(-2.2,1.5,2);scene.add(fill);
+const rim=new THREE.DirectionalLight(0xffffff,1.35);rim.position.set(0,2,-3);scene.add(rim);
 const garmentMaterial=new THREE.MeshPhysicalMaterial({color:new THREE.Color(currentColor),metalness:0,roughness:.48,clearcoat:.12,clearcoatRoughness:.52,side:THREE.DoubleSide});
 function resize(){const r=stage.getBoundingClientRect();camera.aspect=r.width/r.height;camera.updateProjectionMatrix();renderer.setSize(r.width,r.height,false)}
 function setColor(hex,name){currentColor=hex;garmentMaterial.color.set(hex);garmentMaterial.needsUpdate=true;customColor.value=hex;dot.style.background=hex;colorName.textContent=name||hex.toUpperCase();document.querySelectorAll('.swatch').forEach(b=>b.classList.toggle('active',b.dataset.color.toLowerCase()===hex.toLowerCase()))}
 const colors=document.getElementById('colors');
 palette.forEach(([name,hex],i)=>{const b=document.createElement('button');b.type='button';b.className='swatch'+(i===0?' active':'');b.dataset.color=hex;b.style.background=hex;b.title=name;b.setAttribute('aria-label',name);b.addEventListener('click',()=>setColor(hex,name));colors.appendChild(b)});
 customColor.addEventListener('input',e=>setColor(e.target.value,'Personalizada'));
-function fitModel(root){const box=new THREE.Box3().setFromObject(root);const size=box.getSize(new THREE.Vector3());const center=box.getCenter(new THREE.Vector3());root.position.sub(center);root.position.y+=size.y/2;const maxDim=Math.max(size.x,size.y,size.z);const scale=1.18/maxDim;root.scale.setScalar(scale);const newBox=new THREE.Box3().setFromObject(root);const newSize=newBox.getSize(new THREE.Vector3());const newCenter=newBox.getCenter(new THREE.Vector3());controls.target.set(newCenter.x,newCenter.y,newCenter.z);camera.position.set(newCenter.x,newCenter.y,newCenter.z+Math.max(1.65,newSize.y*1.65));camera.near=.01;camera.far=50;camera.updateProjectionMatrix();controls.update()}
+function fitModel(root){
+ const box=new THREE.Box3().setFromObject(root);
+ const size=box.getSize(new THREE.Vector3());
+ const center=box.getCenter(new THREE.Vector3());
+ root.position.sub(center);
+ const maxDim=Math.max(size.x,size.y,size.z);
+ root.scale.setScalar(1.35/maxDim);
+ const fitted=new THREE.Box3().setFromObject(root);
+ const fittedSize=fitted.getSize(new THREE.Vector3());
+ const fittedCenter=fitted.getCenter(new THREE.Vector3());
+ controls.target.copy(fittedCenter);
+ camera.position.set(fittedCenter.x,fittedCenter.y,fittedCenter.z+Math.max(1.55,fittedSize.y*1.45));
+ camera.near=.01;camera.far=50;camera.updateProjectionMatrix();controls.update();
+}
 function applyMaterial(root){root.traverse(obj=>{if(obj.isMesh){obj.material=garmentMaterial;obj.castShadow=true;obj.receiveShadow=true}})}
 async function loadModel(){
  try{
   if(!window.THREE||!THREE.GLTFLoader)throw new Error('Biblioteca 3D não carregou.');
   if(typeof DecompressionStream==='undefined')throw new Error('Seu navegador não suporta a descompactação usada nesta demo.');
-  const res=await fetch('assets/lingerie-model.glb.gz?v=1',{cache:'no-store'});
-  if(!res.ok)throw new Error('Não foi possível baixar o modelo ('+res.status+').');
-  const compressed=await res.arrayBuffer();
-  const stream=new Blob([compressed]).stream().pipeThrough(new DecompressionStream('gzip'));
+  const partUrls=Array.from({length:7},(_,i)=>`assets/lingerie-model.part${i}?v=4`);
+  const buffers=await Promise.all(partUrls.map(async url=>{
+   const res=await fetch(url,{cache:'no-store'});
+   if(!res.ok)throw new Error('Não foi possível baixar uma parte do modelo ('+res.status+').');
+   return new Uint8Array(await res.arrayBuffer());
+  }));
+  const total=buffers.reduce((n,b)=>n+b.byteLength,0);
+  const joined=new Uint8Array(total);
+  let offset=0;
+  for(const b of buffers){joined.set(b,offset);offset+=b.byteLength}
+  const stream=new Blob([joined]).stream().pipeThrough(new DecompressionStream('gzip'));
   const arrayBuffer=await new Response(stream).arrayBuffer();
   const loader=new THREE.GLTFLoader();
   loader.parse(arrayBuffer,'',gltf=>{
-    modelRoot=gltf.scene;
-    applyMaterial(modelRoot);
-    scene.add(modelRoot);
-    fitModel(modelRoot);
-    status.className='status ok';
-    status.textContent='Modelo carregado';
-  },err=>{throw err});
+   const root=gltf.scene;
+   applyMaterial(root);
+   scene.add(root);
+   fitModel(root);
+   status.className='status ok';
+   status.textContent='Modelo carregado';
+  },err=>{
+   console.error(err);
+   status.className='status err';
+   status.textContent='Erro ao abrir o modelo 3D';
+  });
  }catch(err){console.error(err);status.className='status err';status.textContent='Erro: '+(err.message||'falha ao carregar o modelo');}
 }
 function animate(){requestAnimationFrame(animate);controls.update();renderer.render(scene,camera)}
