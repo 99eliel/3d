@@ -24,7 +24,8 @@
 <script>
 (()=>{
 'use strict';
-const APP_VERSION='2026.09.01.3';
+const APP_VERSION='2026.09.01.4';
+const EXPECTED_B64_LENGTH=26068;
 const stage=document.getElementById('stage'),canvas=document.getElementById('viewer'),status=document.getElementById('status'),dot=document.getElementById('dot'),colorName=document.getElementById('colorName'),customColor=document.getElementById('customColor');
 const palette=[['Rosa','#d96f91'],['Preto','#181719'],['Vermelho','#b72b42'],['Vinho','#681d35'],['Azul marinho','#172b4b'],['Azul petróleo','#27616a'],['Lavanda','#917cab'],['Branco','#eee9e1'],['Bege','#d4b89b'],['Verde oliva','#667154'],['Chocolate','#58362d'],['Laranja','#cf7447']];
 let material;
@@ -40,12 +41,24 @@ function fit(root){const box=new THREE.Box3().setFromObject(root),size=box.getSi
 async function loadModel(){try{
  if(!window.THREE||!THREE.GLTFLoader)throw new Error('Biblioteca 3D não carregou');
  if(typeof DecompressionStream==='undefined')throw new Error('Navegador sem suporte à descompactação');
- const urls=['assets/lingerie-model-fixed.glb.gz.b64','assets/modelb64_1.txt','assets/modelb64_2.txt','assets/modelb64_3.txt','assets/modelb64_4.txt'];
- let b64='';for(let i=0;i<urls.length;i++){status.innerHTML='<span class="ring"></span>Carregando '+(i+1)+'/'+urls.length+'...';const r=await fetch(urls[i]+'?v='+APP_VERSION,{cache:'no-store'});if(!r.ok)throw new Error('falha no arquivo '+(i+1)+' ('+r.status+')');b64+=(await r.text()).replace(/\s/g,'')}
- let raw;try{const bin=atob(b64);raw=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)raw[i]=bin.charCodeAt(i)}catch(e){throw new Error('Base64 do modelo inválido')}
+ const urls=['assets/modelb64_0.txt','assets/modelb64_1.txt','assets/modelb64_2.txt','assets/modelb64_3a.txt','assets/modelb64_3b.txt','assets/modelb64_4.txt'];
+ let b64='';
+ for(let i=0;i<urls.length;i++){
+   status.innerHTML='<span class="ring"></span>Carregando '+(i+1)+'/'+urls.length+'...';
+   const r=await fetch(urls[i]+'?v='+APP_VERSION,{cache:'no-store'});
+   if(!r.ok)throw new Error('falha no arquivo '+(i+1)+' ('+r.status+')');
+   b64+=(await r.text()).replace(/\s/g,'');
+ }
+ if(b64.length!==EXPECTED_B64_LENGTH)throw new Error('modelo incompleto ('+b64.length+'/'+EXPECTED_B64_LENGTH+')');
+ let raw;
+ try{const bin=atob(b64);raw=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)raw[i]=bin.charCodeAt(i)}catch(e){throw new Error('Base64 do modelo inválido')}
  if(raw[0]!==0x1f||raw[1]!==0x8b)throw new Error('arquivo compactado inválido');
- const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));const glb=await new Response(stream).arrayBuffer();const head=new Uint8Array(glb,0,4);if(head[0]!==0x67||head[1]!==0x6c||head[2]!==0x54||head[3]!==0x46)throw new Error('GLB inválido após descompactar');
- const loader=new THREE.GLTFLoader();loader.parse(glb,'',gltf=>{const root=gltf.scene;material=new THREE.MeshPhysicalMaterial({color:0xd96f91,roughness:.48,metalness:0,clearcoat:.1,side:THREE.DoubleSide});root.traverse(o=>{if(o.isMesh){if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();o.material=material}});scene.add(root);fit(root);status.className='status ok';status.textContent='Modelo carregado';},e=>{console.error(e);status.className='status err';status.textContent='Erro ao abrir o GLB'});
+ const stream=new Blob([raw]).stream().pipeThrough(new DecompressionStream('gzip'));
+ const glb=await new Response(stream).arrayBuffer();
+ const head=new Uint8Array(glb,0,4);
+ if(head[0]!==0x67||head[1]!==0x6c||head[2]!==0x54||head[3]!==0x46)throw new Error('GLB inválido após descompactar');
+ const loader=new THREE.GLTFLoader();
+ loader.parse(glb,'',gltf=>{const root=gltf.scene;material=new THREE.MeshPhysicalMaterial({color:0xd96f91,roughness:.48,metalness:0,clearcoat:.1,side:THREE.DoubleSide});root.traverse(o=>{if(o.isMesh){if(!o.geometry.attributes.normal)o.geometry.computeVertexNormals();o.material=material}});scene.add(root);fit(root);status.className='status ok';status.textContent='Modelo carregado';},e=>{console.error(e);status.className='status err';status.textContent='Erro ao abrir o GLB'});
  }catch(e){console.error(e);status.className='status err';status.textContent='Erro: '+e.message}}
 async function cleanupOldSW(){try{if('serviceWorker'in navigator){for(const r of await navigator.serviceWorker.getRegistrations())await r.unregister()}if('caches'in window){for(const k of await caches.keys())await caches.delete(k)}}catch(e){}}
 async function checkUpdate(){try{const r=await fetch('version.json?t='+Date.now(),{cache:'no-store'});if(!r.ok)return;const v=(await r.json()).version;if(v&&v!==APP_VERSION){const u=new URL(location.href);u.searchParams.set('v',v);location.replace(u.href)}}catch(e){}}
